@@ -1,4 +1,7 @@
-# TODO load dictionary from file
+dictionary = File.open("./google-10000-english-no-swears.txt").read.split("\n")
+word_options = dictionary.filter do |word|
+    word.length.between?(5, 12)
+end
 
 # TODO select random word between 5 and 12 chars
 
