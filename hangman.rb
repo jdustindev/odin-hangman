@@ -6,15 +6,12 @@ end
 # Pick a random word
 @word = word_options.sample
 
-# TODO set up display (should be rerendered each turn) -
-# 0/6 wrong
-# letters used: X X X X ...
 @num_wrong_guesses = 0
 @max_wrong_guesses = 6
 @wrong_guesses = []
 @correct_guesses = "_" * @word.length
 
-gameover = false
+@gameover = false
 
 def render
     system("clear") || system("cls")
@@ -43,14 +40,43 @@ def play_round
                 @correct_guesses[index] = guess
             end
         end
+    else
+        @num_wrong_guesses += 1
+    end
+
+    if !@correct_guesses.include? "_"
+        puts "YOU WIN!"
+        @gameover = true
+    end
+
+    if @num_wrong_guesses >= @max_wrong_guesses
+        puts "YOU LOSE"
+        @gameover = true
+    end
+end
+
+def save_game
+    puts "Saving..."
+
+    gamestate = [{
+        "word" => @word,
+        "num_wrong_guesses" => @num_wrong_guesses,
+        "wrong_guesses" => @wrong_guesses,
+        "correct_guesses" => @correct_guesses
+    }]
+    File.open("save.json", "w") do |f|
+        f.puts gamestate
     end
 end
 
 # TODO load game logic
 
-until gameover
+until @gameover
     render
     play_round
     # TODO quicksave logic
-    # TODO turn logic
+    print "Save game? (y/n): "
+    if gets.chomp.downcase == 'y'
+        save_game
+    end
 end
