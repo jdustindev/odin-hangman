@@ -1,3 +1,5 @@
+require 'json'
+
 dictionary = File.open("./google-10000-english-no-swears.txt").read.split("\n")
 word_options = dictionary.filter do |word|
     word.length.between?(5, 12)
@@ -58,18 +60,27 @@ end
 def save_game
     puts "Saving..."
 
-    gamestate = [{
+    gamestate = {
         "word" => @word,
         "num_wrong_guesses" => @num_wrong_guesses,
         "wrong_guesses" => @wrong_guesses,
         "correct_guesses" => @correct_guesses
-    }]
+    }
     File.open("save.json", "w") do |f|
-        f.puts gamestate
+        f.puts JSON.dump(gamestate)
     end
 end
 
 # TODO load game logic
+print "Load game? (y/n): "
+if gets.chomp.downcase == "y"
+    file = File.read('./save.json')
+    game_state = JSON.parse(file)
+    @word = game_state["word"]
+    @num_wrong_guesses = game_state["num_wrong_guesses"]
+    @wrong_guesses = game_state["wrong_guesses"]
+    @correct_guesses = game_state["correct_guesses"]
+end
 
 until @gameover
     render
