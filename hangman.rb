@@ -43,6 +43,7 @@ def play_round
             end
         end
     else
+        @wrong_guesses << guess
         @num_wrong_guesses += 1
     end
 
